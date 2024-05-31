@@ -163,14 +163,14 @@
 <script>
 
     var budget_insight = JSON.parse('{{ budget_insight_data|escapejs }}');
-    console.log("budget_insight = ", budget_insight)
+    
     $(function () {
         // Data for the charts
 
         var months = budget_insight.map(item => item.month);
         var income = budget_insight.map(item => item.income);
         var expenses = budget_insight.map(item => item.expense)
-        console.log(expenses)
+        
         // Line Chart
         Highcharts.chart('line-chart', {
             title: {
