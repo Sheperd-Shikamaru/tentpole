@@ -115,9 +115,6 @@
                                         <div id="bar-chart">
                                         </div>
                                     </figure>
-                                        {% comment %} <div id="line-chart" style="height: 400px; min-width: 310px"></div>
-                                        <div id="bar-chart" style="height: 400px; min-width: 310px; margin-top: 50px;"></div>
-                                     {% endcomment %}
                                         
                                     {% endif %}
                                 </section>
@@ -164,18 +161,16 @@
 <script src="https://code.highcharts.com/stock/modules/accessibility.js"></script>
 
 <script>
-    var budget_insight = '{{budget_insight_data}}';
+
+    var budget_insight = JSON.parse('{{ budget_insight_data|escapejs }}');
     console.log("budget_insight = ", budget_insight)
     $(function () {
         // Data for the charts
-        var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        var income = [30288, 30760, 33773, 21024, 23768, 23107, 21416, 23970, 23028, 21396, 34921, 28667];
-        var expenses = [9159, 17690, 8684, 27693, 4945, 14580, 12497, 16305, 21533, 3108, 8412, 20639];
 
-        //var months = budgetData.map(item => item.month);
-        //var income = budgetData.map(item => item.income);
-        //var expenses = budgetData.map(item => item.expense);
-
+        var months = budget_insight.map(item => item.month);
+        var income = budget_insight.map(item => item.income);
+        var expenses = budget_insight.map(item => item.expense)
+        console.log(expenses)
         // Line Chart
         Highcharts.chart('line-chart', {
             title: {
