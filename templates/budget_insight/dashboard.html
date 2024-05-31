@@ -1,0 +1,208 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block content %}
+
+
+<div class="container-fluid mt-4">
+    <div class="row">
+    
+
+        <div class="col-lg-6 col-md-12 mt-2">
+            <div class="row">
+                
+               
+
+                <div class="col-lg-6 col-md-6 mb-4">
+                    <div class="card shadow rounded-6 h-100 bg-image">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between px-md-1">
+                                <div>
+                                    <h4 class="text-red fw-bold">{{agents}}</h4>
+                                    <p class="text-blue mb-0 fw-bold"><h6 class="font-style">Customers</h6></p>
+                                </div>
+                                <div class="align-self-center text-centered">
+                                    <span class="grey-dot">
+                                        {% comment %} <img src="{% static 'images\agreement-white.png' %}" width="40" alt="agreement" class="m-2"> {% endcomment %}
+                                    </span>
+                                    <div class="mt-5">
+                                        {% comment %} <a href ="{% url 'view_all_users' %}" class="mx-3 fw-bold view">view </a> {% endcomment %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt-2">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row mt-2">
+                <div class="col-md-12 mb-4">
+                    <div class="card shadow h-100">
+                        <div class="card-body">
+                            
+                            <hr class="mt-2 mb-4 fw-bold">
+                          
+                            <figure class="highcharts-figure">
+                                <div id="grouped-bar-chart">
+                                    
+                                </div>
+                            </figure>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12 mb-4">
+                    <div class="card shadow h-100">
+                        <div class="card-body">
+                            
+                            <hr class="mt-2 mb-4 fw-bold">
+                          
+                            <figure class="highcharts-figure">
+                                <div id="multi-line-chart">
+                                    
+                                </div>
+                            </figure>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% block javascript %}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://code.highcharts.com/stock/highstock.js"></script>
+<script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/stock/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/stock/modules/accessibility.js"></script>
+
+
+<script>
+    $(function () {
+        // Example data for three customers
+        var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        var customers = ['Customer A', 'Customer B', 'Customer C'];
+        var incomeData = [
+            [30288, 30760, 33773, 21024, 23768, 23107, 21416, 23970, 23028, 21396, 34921, 28667],
+            [25000, 28000, 30000, 20000, 22000, 21000, 20000, 25000, 22000, 21000, 32000, 27000],
+            [28000, 29000, 32000, 22000, 24000, 22000, 21000, 26000, 23000, 22000, 33000, 28000]
+        ];
+        var expensesData = [
+            [9159, 17690, 8684, 27693, 4945, 14580, 12497, 16305, 21533, 3108, 8412, 20639],
+            [8000, 15000, 7000, 20000, 4000, 12000, 10000, 15000, 18000, 3000, 8000, 18000],
+            [8500, 16000, 7500, 22000, 4500, 13000, 11000, 16000, 20000, 3500, 8200, 19000]
+        ];
+
+        // Prepare data for grouped bar chart
+        var seriesData = [];
+        for (var i = 0; i < customers.length; i++) {
+            seriesData.push({
+                name: customers[i] + ' Income',
+                data: incomeData[i]
+            });
+            seriesData.push({
+                name: customers[i] + ' Expenses',
+                data: expensesData[i]
+            });
+        }
+
+        // Grouped Bar Chart
+        Highcharts.chart('grouped-bar-chart', {
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: 'Monthly Income and Expenses by Customer'
+            },
+            xAxis: {
+                categories: months,
+                crosshair: true
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Amount (R)'
+                }
+            },
+            tooltip: {
+                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                    '<td style="padding:0"><b>{point.y:.1f} R</b></td></tr>',
+                footerFormat: '</table>',
+                shared: true,
+                useHTML: true
+            },
+            plotOptions: {
+                column: {
+                    pointPadding: 0.2,
+                    borderWidth: 0
+                }
+            },
+            series: seriesData
+        });
+
+        // Prepare data for multi-line chart
+        var lineSeriesData = [];
+        for (var i = 0; i < customers.length; i++) {
+            lineSeriesData.push({
+                name: customers[i] + ' Income',
+                data: incomeData[i]
+            });
+            lineSeriesData.push({
+                name: customers[i] + ' Expenses',
+                data: expensesData[i]
+            });
+        }
+
+        // Multi-Line Chart
+        Highcharts.chart('multi-line-chart', {
+            title: {
+                text: 'Monthly Income and Expenses by Customer'
+            },
+            xAxis: {
+                categories: months
+            },
+            yAxis: {
+                title: {
+                    text: 'Amount (R)'
+                }
+            },
+            legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'middle'
+            },
+            series: lineSeriesData,
+            responsive: {
+                rules: [{
+                    condition: {
+                        maxWidth: 500
+                    },
+                    chartOptions: {
+                        legend: {
+                            layout: 'horizontal',
+                            align: 'center',
+                            verticalAlign: 'bottom'
+                        }
+                    }
+                }]
+            }
+        });
+    });
+</script>
+
+
+{% endblock javascript %}
+
+{% endblock %}

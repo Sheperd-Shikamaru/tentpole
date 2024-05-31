@@ -1,0 +1,265 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block content %}
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12 mt-3">
+            <div class="card rounded-6">
+                <div class="card-header bg-blue">
+                    <h1 class="card-heading mt-2 mb-2">Profile</h1>
+                </div>
+                <div class="card-body" id="user_div">
+                    <ul class="nav nav-tabs nav-fill mt-3">
+                        <li class="nav-item">
+                            <a class="nav-link show active " data-bs-toggle="tab" href="#user_info_tab">Customer Profile</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#budget_table">Budget Insights Table</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#budget_graph">Budget Insights Graph</a>
+                        </li>
+                    </ul>
+    
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="user_info_tab">
+                            <div id="results_container" class="card-body text-xxs">
+                                <div class="row">
+                                    <ul class="list-group">
+                                        <li class="col-12 list-group-item border-0 d-flex p-4 mb-2 bg-gray-100 border-radius-lg">
+                                        <div class="d-flex flex-column">
+                                            <h6 class="mb-3 text-lg text-blue fw-bold" id="cloned_link">Customer</h6>
+                                            <span class="mb-1 text-sm">First Name: <span
+                                                class="text-danger ms-sm-2 font-weight-bold" id="cloned_email">{{ customer.first_name }}</span>
+                                            </span>
+                                            <span class="mb-1 text-sm">Last Name: <span
+                                                class="text-danger ms-sm-2 font-weight-bold">{{ customer.last_name }}</span>
+                                            </span>
+                                            <span class="mb-1 text-sm">Data of Birth: <span
+                                                class="text-danger ms-sm-2 font-weight-bold">{{ customer.date_of_birth }}</span>
+                                            </span>
+                                            
+                                        </div>
+                                        </li>
+                                    </ul>
+                                    
+                                </div>
+                            </div>
+                        </div>
+    
+                        <div class="tab-pane fade" id="budget_table">
+                            <div class="card-body text-xxs">
+                                {% if budget_insight == None %}
+                                <div class="alert alert-secondary" role="alert">
+                                    No Results Found
+                                </div>
+                                {% else %}
+                                    
+                                    <div class="table-responsive">
+                                        <table id="admindata" class="table align-items-center mb-0">
+                                            <thead>            
+                                                <tr>
+                                                    <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                                        Month
+                                                    </th>
+                                                    <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                                        Income
+                                                    </th>
+                                                    <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                                        Expense
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for customer_insight in budget_insight %}
+                                                <tr>
+                                                    <td>
+                                                        <span class="text-secondary text-xs font-weight-bold">{{ customer_insight.month }}</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="text-secondary text-xs font-weight-bold">R {{ customer_insight.income }}</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="text-secondary text-xs font-weight-bold">R {{ customer_insight.expense }}</span>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                       
+                                        </div>
+                                    
+                                {% endif %}
+                            </div>
+                        </div>
+    
+                        <div class="tab-pane fade" id="budget_graph">
+                            <div class="tab-pane fade show" id="budget_graph">
+                                <section class="py-3">
+                                    {% if budget_insight == None %}
+                                        <div class="alert alert-secondary" role="alert">
+                                            No Results Found
+                                        </div>
+                                    {% else %}
+                                    <figure class="highcharts-figure">
+                                        <div id="line-chart">
+                                        </div>
+                                    </figure>
+
+                                    <div class="mb-5"></div>
+
+                                    <figure class="highcharts-figure">
+                                        <div id="bar-chart">
+                                        </div>
+                                    </figure>
+                                        {% comment %} <div id="line-chart" style="height: 400px; min-width: 310px"></div>
+                                        <div id="bar-chart" style="height: 400px; min-width: 310px; margin-top: 50px;"></div>
+                                     {% endcomment %}
+                                        
+                                    {% endif %}
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block javascript %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.3/js/standalone/selectize.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.getElementById('dateForm').addEventListener('submit', function(event) {
+        var dateInput = document.getElementById('date');
+        var dateError = document.getElementById('dateError');
+        var selectedDate = new Date(dateInput.value);
+        var today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        if (selectedDate >= today) {
+            event.preventDefault();
+            dateError.classList.remove('d-none');
+        } else {
+            dateError.classList.add('d-none');
+        }
+    });
+</script>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://code.highcharts.com/stock/highstock.js"></script>
+<script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/stock/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/stock/modules/accessibility.js"></script>
+
+<script>
+    var budget_insight = '{{budget_insight_data}}';
+    console.log("budget_insight = ", budget_insight)
+    $(function () {
+        // Data for the charts
+        var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        var income = [30288, 30760, 33773, 21024, 23768, 23107, 21416, 23970, 23028, 21396, 34921, 28667];
+        var expenses = [9159, 17690, 8684, 27693, 4945, 14580, 12497, 16305, 21533, 3108, 8412, 20639];
+
+        //var months = budgetData.map(item => item.month);
+        //var income = budgetData.map(item => item.income);
+        //var expenses = budgetData.map(item => item.expense);
+
+        // Line Chart
+        Highcharts.chart('line-chart', {
+            title: {
+                text: 'Monthly Income and Expenses'
+            },
+            xAxis: {
+                categories: months
+            },
+            yAxis: {
+                title: {
+                    text: 'Amount (R)'
+                }
+            },
+            legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'middle'
+            },
+            series: [{
+                name: 'Income',
+                data: income
+            }, {
+                name: 'Expenses',
+                data: expenses
+            }],
+            responsive: {
+                rules: [{
+                    condition: {
+                        maxWidth: 500
+                    },
+                    chartOptions: {
+                        legend: {
+                            layout: 'horizontal',
+                            align: 'center',
+                            verticalAlign: 'bottom'
+                        }
+                    }
+                }]
+            }
+        });
+
+        // Bar Chart
+        Highcharts.chart('bar-chart', {
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: 'Monthly Income and Expenses'
+            },
+            xAxis: {
+                categories: months,
+                crosshair: true
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Amount (R)'
+                }
+            },
+            tooltip: {
+                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                    '<td style="padding:0"><b>{point.y:.1f} R</b></td></tr>',
+                footerFormat: '</table>',
+                shared: true,
+                useHTML: true
+            },
+            plotOptions: {
+                column: {
+                    pointPadding: 0.2,
+                    borderWidth: 0
+                }
+            },
+            series: [{
+                name: 'Income',
+                data: income
+            }, {
+                name: 'Expenses',
+                data: expenses
+            }]
+        });
+    });
+</script>
+
+
+
+{% endblock %}

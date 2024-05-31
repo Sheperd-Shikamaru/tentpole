@@ -1,0 +1,148 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12 mt-3">
+            <div class="card rounded-6">
+                <div class="card-header bg-blue">
+                    <h1 class="card-heading mt-2 mb-2">Customer</h1>
+                </div>
+                <div class="card-body">
+                    
+                    <div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent">
+                        <div class="tab-pane fade show active" id="nav-customer" role="tabpanel" aria-labelledby="nav-customer-tab">
+                            <div class="justify-content-around">
+                                <div class="col-md-12">
+                                    <div class="text-left">
+                                        <button class="btn btn-danger btn-sm mb-2 text-xxs fw-bold rounded-pill" data-bs-toggle="modal" data-bs-target="#add_customer">
+                                            <span class="mt-2 mb-2 p-2"><i class="fa fa-plus" aria-hidden="true"></i> Add Customer</span></button>   
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table id="admindata" class="table align-items-center mb-0">
+                                            <thead>            
+                                                <tr>
+                                                    <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                                        No.
+                                                    </th>
+                                                    <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                                        First name
+                                                    </th>
+                                                    <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                                        Last name
+                                                    </th>
+                                                    <th
+                                                        class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-2">
+                                                        date of birth
+                                                    </th>
+                                                    <th
+                                                        class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-2">
+                                                        Action
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for customer in customers %}
+                                                    <tr>
+                                                        <td class="counterCell px-4 text-secondary text-xs font-weight-bold">
+                                                            {{forloop.counter}}
+                                                        </td>
+                                                        <td>
+                                                            <span class="text-secondary text-xs font-weight-bold">{{ customer.first_name }}</span>
+                                                        </td>
+                                                        <td>
+                                                            <span class="text-secondary text-xs font-weight-bold">{{ customer.last_name }}</span>
+                                                        </td>
+                                                        <td>
+                                                            <span class="text-secondary text-xs font-weight-bold">{{ customer.date_of_birth }}</span>
+                                                        </td>
+                                                        <td>
+                                                            <a class="btn btn-danger btn-sm text-xs fw-bold rounded-pill" href="{% url 'view_customer' customer.id %}"
+                                                                type="button"><span class="mt-2 mb-2 p-2">View</span></a>
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                       
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <form id="form" action="javascript:void(0);"></form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="add_customer" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="static_backdrop_label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <form action="{% url 'create_customer' %}" method="POST" enctype="multipart/form-data" class="bootstrap-form" id="dateForm">
+                {% csrf_token %}
+            <div class="modal-header">
+                <h5 class="modal-title text-blue fw-bold" id="static_backdrop_label">Create Customer</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <label class="form-label text-xs fw-bold" for="first_name">First Name</label><span class="text-danger">*</span>
+                <input class="form-control text-xs" type="text" id="first_name" name="first_name" required>
+                <label class="form-label text-xs fw-bold" for="last_name">Last Name</label><span class="text-danger">*</span>
+                <input class="form-control text-xs" type="text" id="last_name" name="last_name" required>
+
+                <label class="form-label text-xs fw-bold" for="email">Date of birth</label><span class="text-danger">*</span>
+                <input class="form-control text-xs" type="date" id="date" name="date_of_birth" required>
+                <span class="d-none text-danger text-xs" id="dateError">Please select a date older than today.</span><br>
+
+                <label class="form-label text-xs fw-bold" for="phone_number">Income and expense</label><span class="text-danger">*</span>
+                <input class="form-control text-xs" name="file" type="file" id="file" required accept=".csv, .xls, .xlsx, text/csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+                
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-danger btn-sm fw-bold rounded-pill px-3" id="saveUser">Create</button>
+            </div>
+        </form>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block javascript %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.3/js/standalone/selectize.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.getElementById('dateForm').addEventListener('submit', function(event) {
+        var dateInput = document.getElementById('date');
+        var dateError = document.getElementById('dateError');
+        var selectedDate = new Date(dateInput.value);
+        var today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        if (selectedDate >= today) {
+            event.preventDefault();
+            dateError.classList.remove('d-none');
+        } else {
+            dateError.classList.add('d-none');
+        }
+    });
+</script>
+
+<script>
+    const CSRF_TOKEN = '{{ csrf_token }}'
+</script>
+
+
+
+{% endblock %}
